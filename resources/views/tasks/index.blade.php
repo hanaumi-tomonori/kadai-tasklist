@@ -2,7 +2,7 @@
 
 @section('content')
 
-    @if($user)
+    @if(\Auth::check())
         <h1>タスク一覧</h1>
         
         @if (count($tasks) > 0)

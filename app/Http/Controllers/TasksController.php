@@ -7,7 +7,7 @@ use Illuminate\Http\Request;
 use App\Http\Requests;
 use App\Http\Controllers\Controller;
 
-use App\task;
+use \App\Task;
 
 class TasksController extends Controller
 {
@@ -18,17 +18,16 @@ class TasksController extends Controller
      */
     public function index()
     {
-        $user = \Auth::user();
-        $tasks = [];
-        
-        if ($user) {
-            $tasks = task::all();
+        $data = [];
+        if (\Auth::check()) {
+            $user = \Auth::user();
+            $tasks = $user->tasks()->orderBy('created_at', 'desc')->paginate(2);
+            $data = [
+                'user' => $user,
+                'tasks' => $tasks,
+            ];
         }
-        
-        return view('tasks.index', [
-            'user' => $user,
-            'tasks' => $tasks
-        ]);
+        return view('tasks.index', $data);
     }
 
     /**
@@ -61,7 +60,12 @@ class TasksController extends Controller
         $task = new task;
         $task->status = $request->status;
         $task->content = $request->content;
-        $task->save();
+        // $task->user_id = \Auth::user()->id;
+        // $task->save();
+        // \Auth::user()->tasks()->save($task);
+        $user = $request->user();
+        $relation = $user->tasks();
+        $relation->save($task);
         
         return redirect('/');
     }

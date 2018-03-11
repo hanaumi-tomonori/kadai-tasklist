@@ -22,6 +22,8 @@ class User extends Model implements AuthenticatableContract,
      * @var string
      */
     protected $table = 'users';
+    
+
 
     /**
      * The attributes that are mass assignable.
@@ -36,4 +38,12 @@ class User extends Model implements AuthenticatableContract,
      * @var array
      */
     protected $hidden = ['password', 'remember_token'];
+    
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
+    public function tasks()
+    {
+        return $this->hasMany(\App\Task::class);
+    }
 }
